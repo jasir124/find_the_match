@@ -105,15 +105,23 @@ if os.getenv('DATABASE_URL'):
     db_url = os.getenv('DATABASE_URL')
     if '?' in db_url:
         base, query = db_url.split('?', 1)
-        # We can safely discard these TiDB-specific flags for mysqlclient
-        # as the connection will still be encrypted, but mysqlclient uses 'ssl' dict in OPTIONS.
         db_url = base
         
     DATABASES['default'] = dj_database_url.parse(db_url)
-    # Ensure strict mode is still applied
+    
+    # TiDB Serverless strictly requires TLS.
+    # To force TLS in mysqlclient, we must provide the CA certificates path.
+    ssl_config = {}
+    if os.path.exists('/etc/ssl/certs/ca-certificates.crt'):
+        ssl_config['ca'] = '/etc/ssl/certs/ca-certificates.crt' # Ubuntu/Debian (Render)
+    elif os.path.exists('/etc/pki/tls/certs/ca-bundle.crt'):
+        ssl_config['ca'] = '/etc/pki/tls/certs/ca-bundle.crt' # CentOS/RHEL
+    else:
+        ssl_config['ssl_mode'] = 'REQUIRED' # Fallback
+        
     DATABASES['default']['OPTIONS'] = {
         'init_command': "SET sql_mode='STRICT_TRANS_TABLES'",
-        'ssl': {'ssl_mode': 'REQUIRED'} # Force TLS for TiDB
+        'ssl': ssl_config
     }
 
 
