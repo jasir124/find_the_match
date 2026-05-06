@@ -1,0 +1,56 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="row">
+    <div class="col-lg-8 mx-auto">
+        <div class="premium-card mb-4">
+            <h3 class="page-header mb-4">Add a New Skill</h3>
+            <form method="post" class="row g-3 align-items-end">
+                {% csrf_token %}
+                <div class="col-md-7">
+                    <label class="form-label">Select Skill</label>
+                    {{ add_form.skill }}
+                </div>
+                <div class="col-md-3">
+                    <label class="form-label">Rating (1-10)</label>
+                    {{ add_form.rating }}
+                </div>
+                <div class="col-md-2">
+                    <button type="submit" name="add_skill" class="btn btn-primary w-100">Add</button>
+                </div>
+            </form>
+        </div>
+
+        <div class="premium-card">
+            <h3 class="page-header mb-4">Manage Existing Skills</h3>
+            {% if skills %}
+                <div class="list-group list-group-flush">
+                    {% for s in skills %}
+                    <div class="list-group-item bg-transparent py-3 border-bottom">
+                        <div class="row align-items-center">
+                            <div class="col-md-4">
+                                <h5 class="mb-0 text-primary">{{ s.skill.name }}</h5>
+                                <small class="text-muted">{{ s.skill.category }}</small>
+                            </div>
+                            <div class="col-md-8">
+                                <form method="post" class="d-flex align-items-center justify-content-end gap-2">
+                                    {% csrf_token %}
+                                    <input type="hidden" name="skill_id" value="{{ s.id }}">
+                                    <div class="input-group" style="width: 140px;">
+                                        <input type="number" name="rating" value="{{ s.rating }}" min="1" max="10" class="form-control form-control-sm">
+                                        <button type="submit" name="update_skill" class="btn btn-sm btn-outline-success" title="Update Rating"><i class="bi bi-check-lg"></i></button>
+                                    </div>
+                                    <button type="submit" name="delete_skill" class="btn btn-sm btn-outline-danger" title="Remove Skill" onclick="return confirm('Are you sure?')"><i class="bi bi-trash"></i></button>
+                                </form>
+                            </div>
+                        </div>
+                    </div>
+                    {% endfor %}
+                </div>
+            {% else %}
+                <p class="text-muted">No skills to manage.</p>
+            {% endif %}
+        </div>
+    </div>
+</div>
+{% endblock %}
