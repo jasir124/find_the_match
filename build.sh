@@ -19,7 +19,7 @@ admin.status = 'ACTIVE'
 admin.save()
 
 from skills.models import Skill
-default_skills = ['Python', 'JavaScript', 'Java', 'C++', 'UI/UX Design', 'Graphic Design', 'Video Editing', 'Public Speaking', 'Marketing', 'Data Analysis', 'Web Development', 'Mobile App Development']
+default_skills = ['Python', 'Java', 'C++', 'Web Development', 'Django', 'Networking', 'Cloud Computing', 'DevOps', 'Cybersecurity', 'AI', 'Machine Learning', 'Singing', 'Acting', 'Mimicry', 'Stand-up Comedy', 'Drawing', 'Painting', 'Dance', 'Public Speaking', 'Anchoring', 'Video Editing', 'Photography', 'Content Creation', 'Script Writing', 'Basketball', 'Volleyball', 'Football', 'Cricket', 'Hockey', 'Sprinting (100m/200m/400m)', 'Middle Distance Running', 'Long Distance Running', 'Relay Running', 'High Jump', 'Long Jump', 'Triple Jump', 'Shot Put', 'Discus Throw', 'Javelin Throw', 'Badminton', 'Table Tennis', 'Tennis', 'Chess', 'Carrom']
 for skill_name in default_skills:
     Skill.objects.get_or_create(name=skill_name)
 
