@@ -100,7 +100,21 @@ DATABASES = {
 
 # Override with environment variable if present (for TiDB/Render)
 if os.getenv('DATABASE_URL'):
-    DATABASES['default'] = dj_database_url.parse(os.getenv('DATABASE_URL'))
+    import urllib.parse
+    # Remove unsupported query parameters from the URL string before parsing
+    db_url = os.getenv('DATABASE_URL')
+    if '?' in db_url:
+        base, query = db_url.split('?', 1)
+        # We can safely discard these TiDB-specific flags for mysqlclient
+        # as the connection will still be encrypted, but mysqlclient uses 'ssl' dict in OPTIONS.
+        db_url = base
+        
+    DATABASES['default'] = dj_database_url.parse(db_url)
+    # Ensure strict mode is still applied
+    DATABASES['default']['OPTIONS'] = {
+        'init_command': "SET sql_mode='STRICT_TRANS_TABLES'",
+        'ssl': {'ssl_mode': 'REQUIRED'} # Force TLS for TiDB
+    }
 
 
 # Password validation
